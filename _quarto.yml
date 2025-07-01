@@ -8,7 +8,7 @@ execute:
 
 website:
   title: "Biocontrole de Ferrugem Asiática da Soja"
-  favicon: images/icon.png
+  favicon: images/icone.png
 
   navbar:
     pinned: true
