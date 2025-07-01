@@ -1,1 +1,0 @@
-"0","qqnorm(resid(modelo_aacpd)); qqline(resid(modelo_aacpd))"
