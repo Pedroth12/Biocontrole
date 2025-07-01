@@ -1,3 +1,22 @@
 ---
 title: ""
+format: html
 ---
+
+# O Projeto
+
+<p style="text-align: justify;">Este estudo teve como objetivo avaliar a progressão da ferrugem asiática da soja em condições de casa de vegetação, comparando diferentes estratégias de manejo da doença. As plantas foram mantidas em ambiente com umidade relativa acima de 80%, sombreado e com temperatura variando entre 18-29º C. Foram testados sete isolados de fungos com potencial hiperparasita, aqui denominados Isolado 1, Isolado 2, e assim sucessivamente. Também foram incluídos um fungicida químico de referência (Produto 1) e dois produtos biológicos à base de Bacillus spp. (Produto 2 e Produto 3). Para fins comparativos, foi incluído um tratamento controle negativo, sem aplicação de agentes de controle.</p>
+
+<p style="text-align: justify;">A severidade da doença foi avaliada com base em uma escala diagramática padronizada proposta por Franceschi et al. (2020), que proporciona maior precisão na estimativa dos sintomas e otimiza o uso de recursos experimentais. O objetivo central foi investigar o potencial dos isolados fúngicos como agentes de biocontrole da ferrugem da soja, em comparação com estratégias de controle químico e biológico já disponíveis no mercado.</p>
+
+## Metodologia
+
+<p style="text-align: justify;">Para a condução dos ensaios, foi realizada uma aplicação preventiva dos isolados hiperparasitas quando as plantas atingiram o estágio fenológico V3. Vinte e quatro horas após essa aplicação, procedeu-se à inoculação do patógeno *Phakopsora pachyrhizi*. As aplicações foram realizadas no final da tarde, e as plantas foram mantidas por 15 horas em ambiente escuro, a fim de favorecer a germinação dos esporos. Sete dias após a primeira inoculação do patógeno, os isolados hiperparasitas foram reaplicados, seguidos de uma segunda inoculação da ferrugem.</p>
+
+<p style="text-align: justify;">A primeira avaliação do experimento foi realizada após 14 dias da primeira aplicação do inóculo, com avaliações seguintes realizadas a cada sete dias. Para isso foi utilizada a escala diagramática desenvolvida por Franceschi et al. (2020). Foram selecionadas os segundos e terceiros trifólios de cada repetição e marcados para serem avaliados. Seguiu-se com as avaliações até os 50 dias após primeira inoculação de *P. pachyrhizi*.</p>
+
+![](images/clipboard-54391932.png){fig-align="center"}
+
+Fig.1 Escala diagramática para avaliação da severidade da ferrugem asiática da soja (Franceschi et al. 2020)
+
+Os dados analisados neste trabalho são propriedade de Ana Rita Dudycz.

@@ -1,21 +1,34 @@
 project:
   type: website
   output-dir: docs
+
+execute: 
+  cache: true
+  freeze: auto
+
 website:
   title: "Biocontrole de Ferrugem Asiática da Soja"
-  favicon: images/PhapaK8108b.png
+  favicon: images/icon.png
+
   navbar:
+    pinned: true
     background: "#323f45"
     left:
       - href: index.qmd
         text: Home
+        icon: house-door-fill
+      - text: "Obtenção de dados"
+        file: o_projeto.qmd
+        icon: dice-6-fill
       - text: "Exploração inicial de dados"
+        icon: graph-up-arrow
         menu:
           - text: "Tabela"
             file: table.qmd
           - text: "Gráficos"
             file: exp_dad.qmd
       - text: "Análise de dados"
+        icon: diagram-3-fill
         menu:
           - text: "Área Abaixo da Curva de Progresso da Doença"
             file: aaacpd.qmd
@@ -26,12 +39,14 @@ website:
           - text: "Ranqueamento da AACPD"
             file: ranqueamento.qmd
       - text: "Sobre os autores"
+        icon: info-circle
         file: sobre.qmd
-        
-    page-navigation: true
-    page-footer: 
-      left: "Copyright 2023, D.O. Ramos & P.T.S. Nogueira"
-      background: "#323f45"
+
+  page-navigation: true
+  page-footer: 
+    left: "Copyright 2025, D.O. Ramos & P.T.S. Nogueira"
+    background: "#323f45"
+
 format:
   html:
     theme:
@@ -43,4 +58,5 @@ format:
     warning: false
 
 editor: visual
+
 
