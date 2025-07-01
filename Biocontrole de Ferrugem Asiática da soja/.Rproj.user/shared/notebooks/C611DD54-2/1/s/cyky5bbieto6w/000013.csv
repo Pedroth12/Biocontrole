@@ -1,0 +1,19 @@
+"0","shapiro.test(resid(modelo_log))"
+"1","
+	Shapiro-Wilk normality test
+
+data:  resid(modelo_log)
+W = 0.99468, p-value = 0.02145
+
+"
+"0","leveneTest(AACPD_log ~ Tratamento, data = aacpd_result)"
+"2","G2;H2;Warningh in leveneTest.default(y = y, group = group, ...) :
+  group coerced to factor.g
+"
+"1","Levene's Test for Homogeneity of Variance (center = median)
+       Df F value    Pr(>F)    
+group  10  8.0705 2.394e-12 ***
+      649                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+"

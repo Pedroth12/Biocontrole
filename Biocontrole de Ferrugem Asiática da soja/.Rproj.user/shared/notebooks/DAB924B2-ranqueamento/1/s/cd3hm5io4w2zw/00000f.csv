@@ -1,0 +1,82 @@
+"0","library(MASS)   # Para fitdistr"
+"0","library(stats)"
+"0",""
+"0","# Vetor de resposta"
+"0","x <- aacpd_result$AACPD"
+"0",""
+"0","# 1. Normal"
+"0","ks.test(x, ""pnorm"", mean = mean(x), sd = sd(x))"
+"2","G2;H2;Warningh in ks.test.default(x, ""pnorm"", mean = mean(x), sd = sd(x)) :
+  não devem existir empates no teste de Kolmogorov-Smirnov de apenas uma amostrag
+"
+"1","
+	Asymptotic one-sample Kolmogorov-Smirnov test
+
+data:  x
+D = 0.12414, p-value = 2.924e-09
+alternative hypothesis: two-sided
+
+"
+"0","# 2. Gamma"
+"0","gamma_fit <- fitdistr(x, ""gamma"")"
+"0","ks.test(x, ""pgamma"", shape = gamma_fit$estimate[""shape""], rate = gamma_fit$estimate[""rate""])"
+"2","G2;H2;Warningh in ks.test.default(x, ""pgamma"", shape = gamma_fit$estimate[""shape""],  :
+  não devem existir empates no teste de Kolmogorov-Smirnov de apenas uma amostrag
+"
+"1","
+	Asymptotic one-sample Kolmogorov-Smirnov test
+
+data:  x
+D = 0.032826, p-value = 0.4755
+alternative hypothesis: two-sided
+
+"
+"0","# 3. Log-Normal"
+"0","ks.test(x, ""plnorm"", meanlog = mean(log(x)), sdlog = sd(log(x)))"
+"2","G2;H2;Warningh in ks.test.default(x, ""plnorm"", meanlog = mean(log(x)), sdlog = sd(log(x))) :
+  não devem existir empates no teste de Kolmogorov-Smirnov de apenas uma amostrag
+"
+"1","
+	Asymptotic one-sample Kolmogorov-Smirnov test
+
+data:  x
+D = 0.050365, p-value = 0.07028
+alternative hypothesis: two-sided
+
+"
+"0","# 4. Beta — somente se seus dados estiverem entre 0 e 1"
+"0","# Primeiro normaliza se necessário"
+"0","x_beta <- (x - min(x) + 0.001) / (max(x) - min(x) + 0.002)  # para garantir que caia entre (0,1)"
+"0","beta_fit <- fitdistr(x_beta, dbeta, start = list(shape1 = 1, shape2 = 1))"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"2","G2;H2;Warningh in densfun(x, parm[1], parm[2], ...) : NaNs produzidosg
+"
+"0","ks.test(x_beta, ""pbeta"", shape1 = beta_fit$estimate[""shape1""], shape2 = beta_fit$estimate[""shape2""])"
+"2","G2;H2;Warningh in ks.test.default(x_beta, ""pbeta"", shape1 = beta_fit$estimate[""shape1""],  :
+  não devem existir empates no teste de Kolmogorov-Smirnov de apenas uma amostrag
+"
+"1","
+	Asymptotic one-sample Kolmogorov-Smirnov test
+
+data:  x_beta
+D = 0.087589, p-value = 7.998e-05
+alternative hypothesis: two-sided
+
+"

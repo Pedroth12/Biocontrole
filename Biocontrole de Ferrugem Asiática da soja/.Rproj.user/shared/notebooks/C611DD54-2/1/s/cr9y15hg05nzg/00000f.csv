@@ -1,0 +1,88 @@
+"0","# Carregar pacotes necessários"
+"0","library(tidyverse)"
+"0","library(pracma)"
+"0","library(lme4)"
+"0","library(lmerTest)"
+"0","library(car)"
+"0",""
+"0","# 1. Calcular AACPD por unidade experimental"
+"0","aacpd_result <- dados %>%"
+"0","  group_by(Tratamento, Planta, Trifolio, Foliolo, Avaliador) %>%"
+"0","  summarise("
+"0","    AACPD = trapz(Dia, Severidade),"
+"0","    .groups = ""drop"""
+"0","  ) %>%"
+"0","  mutate("
+"0","    AACPD_sqrt = sqrt(AACPD)  # Aplicando raiz quadrada"
+"0","  )"
+"0",""
+"0","# 2. Ajustar modelo misto com variável transformada"
+"0","modelo_sqrt <- lmer("
+"0","  AACPD_sqrt ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador),"
+"0","  data = aacpd_result"
+"0",")"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"0","# 3. Análise dos resultados"
+"0","summary(modelo_sqrt)"
+"1","Linear mixed model fit by REML. t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: AACPD_sqrt ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador)
+   Data: aacpd_result
+
+REML criterion at convergence: 3881.9
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.3886 -0.5873 -0.1498  0.4779  4.7839 
+
+Random effects:
+ Groups                            Name        Variance  Std.Dev. 
+ Avaliador:Foliolo:Trifolio:Planta (Intercept) 0.000e+00 0.0000000
+ Foliolo:Trifolio:Planta           (Intercept) 9.649e-08 0.0003106
+ Trifolio:Planta                   (Intercept) 5.231e+00 2.2870744
+ Planta                            (Intercept) 1.785e-08 0.0001336
+ Residual                                      2.079e+01 4.5591872
+Number of obs: 660, groups:  
+Avaliador:Foliolo:Trifolio:Planta, 60; Foliolo:Trifolio:Planta, 30; Trifolio:Planta, 10; Planta, 5
+
+Fixed effects:
+                    Estimate Std. Error       df t value Pr(>|t|)    
+(Intercept)          18.0762     0.9325  22.0268  19.385 2.49e-15 ***
+TratamentoIsolado 1  -2.3492     0.8324 639.9996  -2.822 0.004917 ** 
+TratamentoIsolado 2  -2.8658     0.8324 639.9996  -3.443 0.000613 ***
+TratamentoIsolado 3  -1.0915     0.8324 639.9996  -1.311 0.190216    
+TratamentoIsolado 4  -5.7798     0.8324 639.9996  -6.944 9.41e-12 ***
+TratamentoIsolado 5  -1.7174     0.8324 639.9996  -2.063 0.039497 *  
+TratamentoIsolado 6   2.3277     0.8324 639.9996   2.796 0.005322 ** 
+TratamentoIsolado 7   0.1129     0.8324 639.9996   0.136 0.892116    
+TratamentoProduto 1  -8.1275     0.8324 639.9996  -9.764  < 2e-16 ***
+TratamentoProduto 2  -1.6180     0.8324 639.9996  -1.944 0.052359 .  
+TratamentoProduto 3  -4.4819     0.8324 639.9996  -5.384 1.02e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) TrtmI1 TrtmI2 TrtmI3 TrtmI4 TrtmI5 TrtmI6 TrtmI7 TrtmP1 TrtmP2
+TrtmntIsld1 -0.446                                                               
+TrtmntIsld2 -0.446  0.500                                                        
+TrtmntIsld3 -0.446  0.500  0.500                                                 
+TrtmntIsld4 -0.446  0.500  0.500  0.500                                          
+TrtmntIsld5 -0.446  0.500  0.500  0.500  0.500                                   
+TrtmntIsld6 -0.446  0.500  0.500  0.500  0.500  0.500                            
+TrtmntIsld7 -0.446  0.500  0.500  0.500  0.500  0.500  0.500                     
+TrtmntPrdt1 -0.446  0.500  0.500  0.500  0.500  0.500  0.500  0.500              
+TrtmntPrdt2 -0.446  0.500  0.500  0.500  0.500  0.500  0.500  0.500  0.500       
+TrtmntPrdt3 -0.446  0.500  0.500  0.500  0.500  0.500  0.500  0.500  0.500  0.500
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see help('isSingular')
+
+"
+"0","anova(modelo_sqrt)"
+"1","Type III Analysis of Variance Table with Satterthwaite's method
+           Sum Sq Mean Sq NumDF DenDF F value    Pr(>F)    
+Tratamento 5156.2  515.62    10   640  24.806 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+"
+"0","# 4. Diagnóstico dos resíduos"
+"0","plot(modelo_sqrt)  # Resíduos vs valores ajustados"

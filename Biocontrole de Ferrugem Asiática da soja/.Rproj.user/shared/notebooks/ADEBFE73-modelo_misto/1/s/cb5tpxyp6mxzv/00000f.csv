@@ -1,0 +1,83 @@
+"0","# Pacotes necessários"
+"0","library(tidyverse)"
+"0","library(pracma)"
+"0","library(lme4)"
+"0","library(lmerTest)"
+"0","library(pbkrtest)"
+"0",""
+"0","# 1. Calcular AACPD (sem transformação)"
+"0","aacpd_result <- dados %>%"
+"0","  group_by(Tratamento, Planta, Trifolio, Foliolo, Avaliador) %>%"
+"0","  summarise("
+"0","    AACPD = trapz(Dia, Severidade),"
+"0","    .groups = ""drop"""
+"0","  )"
+"0",""
+"0","# 2. Ajustar o modelo completo (com tratamento)"
+"0","modelo_completo <- lmer("
+"0","  AACPD ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador),"
+"0","  data = aacpd_result,"
+"0","  REML = FALSE  # necessário para comparação de modelos"
+"0",")"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"0","# 3. Ajustar o modelo nulo (sem tratamento)"
+"0","modelo_nulo <- lmer("
+"0","  AACPD ~ 1 + (1 | Planta/Trifolio/Foliolo/Avaliador),"
+"0","  data = aacpd_result,"
+"0","  REML = FALSE"
+"0",")"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"0","# 4. Comparação robusta por bootstrap"
+"0","comparacao_robusta <- PBmodcomp(modelo_completo, modelo_nulo, nsim = 1000)"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00259794 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00383373 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0035021 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradientg
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvaluesg
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00403787 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00451999 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00284253 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00361992 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0062465 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00419715 (tol = 0.002, component 1)g
+"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"0","print(comparacao_robusta)"
+"1","Bootstrap test; time: 72.93 sec; samples: 1000; extremes: 0;
+large : AACPD ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador)
+         stat df   p.value    
+LRT    150.84 10 < 2.2e-16 ***
+PBtest 150.84     0.000999 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+"

@@ -1,0 +1,29 @@
+"0","# Pacotes necessários"
+"0","library(tidyverse)"
+"0","library(pracma)"
+"0","library(lme4)"
+"0","library(lmerTest)"
+"0","library(MASS)"
+"2","G3;
+Anexando pacote: ‘MASS’
+
+g"
+"2","G3;O seguinte objeto é mascarado por ‘package:dplyr’:
+
+    select
+
+g"
+"0","library(car)"
+"0",""
+"0","# 1. Calcular AACPD por unidade experimental"
+"0","aacpd_result <- dados %>%"
+"0","  group_by(Tratamento, Planta, Trifolio, Foliolo, Avaliador) %>%"
+"0","  summarise("
+"0","    AACPD = trapz(Dia, Severidade),"
+"0","    .groups = ""drop"""
+"0","  )"
+"0",""
+"0","# 2. Estimar lambda ideal com Box-Cox (usando modelo linear simples)"
+"0","modelo_lm <- lm(AACPD ~ Tratamento, data = aacpd_result)"
+"0",""
+"0","boxcox_result <- boxcox(modelo_lm, lambda = seq(-2, 2, 0.1))"

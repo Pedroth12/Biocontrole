@@ -1,0 +1,372 @@
+---
+title: "Ranqueamento da AACPD"
+---
+
+# Ranking dos tratamentos
+
+```{r}
+# 1. Ajustar modelo misto (se ainda não tiver feito)
+modelo_completo <- lmer(
+  AACPD ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador),
+  data = aacpd_result,
+  REML = TRUE  # pode voltar a usar REML aqui para melhores estimativas
+)
+
+# 2. Carregar o pacote de médias marginais estimadas
+library(emmeans)
+
+# 3. Obter as médias estimadas por tratamento (ajustadas pelo modelo)
+medias <- emmeans(modelo_completo, ~ Tratamento)
+
+# 4. Comparações múltiplas com ajuste de Tukey
+comparacoes <- pairs(medias, adjust = "tukey")
+print(comparacoes)
+
+# 5. Ranqueamento dos tratamentos
+ranking <- multcomp::cld(medias, Letters = letters)  # gera grupos de letras
+print(ranking)
+
+```
+
+# Gráfico comparando os tratamentos
+
+```{r}
+library(emmeans)
+library(multcomp)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+# 1. Obter médias ajustadas do modelo
+medias <- emmeans(modelo_completo, ~ Tratamento)
+
+# 2. Comparações com Tukey + letras de significância
+letras <- cld(medias, Letters = letters, adjust = "tukey")
+
+# 3. Remover espaços das letras
+letras$.group <- gsub(" ", "", letras$.group)
+
+# 4. Renomear tratamentos corretamente
+letras$Tratamento <- letras$Tratamento %>%
+  str_replace("(?i)isola[dt]o\\s*", "Iso. ") %>%
+  str_replace("(?i)produto\\s*", "Prod. ") %>%
+  str_replace("(?i)controle", "Cont.")
+# 5. Ordenar por AACPD (emmean) e fixar ordem como fator
+letras <- letras %>%
+  arrange(emmean) %>%
+  mutate(Tratamento = factor(Tratamento, levels = Tratamento))
+
+# 6. Plot com nomes e ordem corrigidos
+ggplot(letras, aes(x = Tratamento, y = emmean)) +
+  geom_col(fill = "#4682B4", width = 0.7) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  geom_text(aes(label = .group), vjust = -0.5, size = 5) +
+  labs(
+    title = "AACPD ajustado por tratamento",
+    y = "AACPD (área abaixo da curva)",
+    x = "Tratamento"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+```
+
+# Modelo Generalziado - TESTE DE AJUSTE VIA K-S
+
+```{r}
+library(MASS)   # Para fitdistr
+library(stats)
+
+# Vetor de resposta
+x <- aacpd_result$AACPD
+
+# 1. Normal
+ks.test(x, "pnorm", mean = mean(x), sd = sd(x))
+
+# 2. Gamma
+gamma_fit <- fitdistr(x, "gamma")
+ks.test(x, "pgamma", shape = gamma_fit$estimate["shape"], rate = gamma_fit$estimate["rate"])
+
+# 3. Log-Normal
+ks.test(x, "plnorm", meanlog = mean(log(x)), sdlog = sd(log(x)))
+
+# 4. Beta — somente se seus dados estiverem entre 0 e 1
+# Primeiro normaliza se necessário
+x_beta <- (x - min(x) + 0.001) / (max(x) - min(x) + 0.002)  # para garantir que caia entre (0,1)
+beta_fit <- fitdistr(x_beta, dbeta, start = list(shape1 = 1, shape2 = 1))
+ks.test(x_beta, "pbeta", shape1 = beta_fit$estimate["shape1"], shape2 = beta_fit$estimate["shape2"])
+
+```
+
+# Modelo Generalziado
+
+```{r}
+# Pacotes
+library(DHARMa)
+library(readxl)
+library(pracma)
+library(emmeans)
+library(multcompView)
+library(multcomp)
+library(stringr)
+
+# 1. Carregar os dados
+dados <- read_excel("Trabalho final Emerson.xlsx", sheet = "Planilha1")
+
+# 2. Calcular AACPD por unidade experimental
+aacpd_result <- dados %>%
+  arrange(Planta, Trifolio, Foliolo, Avaliador, Tratamento, Dia) %>%
+  group_by(Planta, Trifolio, Foliolo, Avaliador, Tratamento) %>%
+  summarise(
+    AACPD = trapz(Dia, Severidade),
+    .groups = "drop"
+  )
+
+# 3. Ajustar valores zero (GLMM Gamma não aceita zeros)
+aacpd_result <- aacpd_result %>%
+  mutate(AACPD_adj = AACPD + 0.01)
+
+# 4. Modelo misto com distribuição Gamma
+modelo_glmm <- glmer(
+  AACPD_adj ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador),
+  data = aacpd_result,
+  family = Gamma(link = "log")
+)
+
+# 5. Diagnóstico
+summary(modelo_glmm)
+res_sim <- simulateResiduals(modelo_glmm)
+plot(res_sim)
+
+# 6. Médias ajustadas e letras
+medias <- emmeans(modelo_glmm, ~ Tratamento, type = "response")
+letras <- cld(medias, Letters = letters, adjust = "tukey")
+letras$.group <- gsub(" ", "", letras$.group)
+
+# 7. Renomear tratamentos
+letras$Tratamento <- letras$Tratamento %>%
+  str_replace("(?i)isola[dt]o\\s*", "Iso. ") %>%
+  str_replace("(?i)produto\\s*", "Prod. ") %>%
+  str_replace("(?i)controle", "Cont.")
+
+# 8. Organizar para gráfico
+letras_df <- letras[, c("Tratamento", "response", "SE", ".group")]
+
+# Reordena com base nos valores médios
+ordem <- letras_df$Tratamento[order(letras_df$response)]
+letras_df$Tratamento <- factor(letras_df$Tratamento, levels = ordem)
+
+# 9. Gráfico
+ggplot(letras_df, aes(x = Tratamento, y = response)) +
+  geom_col(fill = "#66c2a5", width = 0.7) +
+  geom_errorbar(aes(ymin = response - SE, ymax = response + SE), width = 0.2) +
+  geom_text(aes(label = .group), vjust = -0.5, fontface = "bold", size = 5) +
+  labs(
+    title = "AACPD dos tratamentos",
+    x = "Tratamentos",
+    y = "AACPD"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+```
+
+# AACPD em 28 dias
+
+```{r}
+# -----------------------------
+# 📦 Pacotes
+# -----------------------------
+library(DHARMa)
+library(readxl)
+library(tidyverse)
+library(pracma)
+library(lme4)
+library(emmeans)
+library(multcompView)
+library(multcomp)
+library(stringr)
+
+# -----------------------------
+# 📥 1. Carregar os dados
+# -----------------------------
+dados <- read_excel("Trabalho final Emerson.xlsx", sheet = "Planilha1")
+
+# -----------------------------
+# 🧹 2. Filtrar até o dia 28
+# -----------------------------
+dados_filtrados_28 <- dados %>%
+  filter(Dia <= 28)
+
+# -----------------------------
+# 📊 3. Calcular AACPD por unidade experimental
+# -----------------------------
+aacpd_result_28 <- dados_filtrados_28 %>%
+  arrange(Planta, Trifolio, Foliolo, Avaliador, Tratamento, Dia) %>%
+  group_by(Planta, Trifolio, Foliolo, Avaliador, Tratamento) %>%
+  summarise(
+    AACPD = trapz(Dia, Severidade),
+    .groups = "drop"
+  )
+
+# -----------------------------
+# ⚠️ 4. Ajustar valores zero (GLMM Gamma não aceita zeros)
+# -----------------------------
+aacpd_result_28 <- aacpd_result_28 %>%
+  mutate(AACPD_adj_28 = AACPD + 0.01)
+
+# -----------------------------
+# 🏗️ 5. Modelo misto com distribuição Gamma
+# -----------------------------
+modelo_glmm_28 <- glmer(
+  AACPD_adj_28 ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador),
+  data = aacpd_result_28,
+  family = Gamma(link = "log")
+)
+
+# -----------------------------
+# 🧪 6. Diagnóstico de resíduos
+# -----------------------------
+summary(modelo_glmm_28)
+res_sim_28 <- simulateResiduals(modelo_glmm_28)
+plot(res_sim_28)
+
+# -----------------------------
+# 📊 7. Médias ajustadas e letras de significância
+# -----------------------------
+medias_28 <- emmeans(modelo_glmm_28, ~ Tratamento, type = "response")
+letras_28 <- cld(medias_28, Letters = letters, adjust = "tukey")
+letras_28$.group <- gsub(" ", "", letras_28$.group)
+
+# Renomear tratamentos para gráfico
+letras_28$Tratamento <- letras_28$Tratamento %>%
+  str_replace("(?i)isola[dt]o\\s*", "Iso. ") %>%
+  str_replace("(?i)produto\\s*", "Prod. ") %>%
+  str_replace("(?i)controle", "Cont.")
+
+# -----------------------------
+# 📦 8. Organizar para gráfico
+# -----------------------------
+letras_df_28 <- letras_28[, c("Tratamento", "response", "SE", ".group")]
+
+# Reordenar fatores para o gráfico
+ordem_28 <- letras_df_28$Tratamento[order(letras_df_28$response)]
+letras_df_28$Tratamento <- factor(letras_df_28$Tratamento, levels = ordem_28)
+
+# -----------------------------
+# 🎨 9. Gráfico final
+# -----------------------------
+ggplot(letras_df_28, aes(x = Tratamento, y = response)) +
+  geom_col(fill = "#CC5500", width = 0.7) +
+  geom_errorbar(aes(ymin = response - SE, ymax = response + SE), width = 0.2) +
+  geom_text(aes(label = .group), vjust = -0.5, fontface = "bold", size = 5) +
+  labs(
+    title = "AACPD dos tratamentos (até 28 dias)",
+    x = "Tratamentos",
+    y = "AACPD"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
+```
+
+# AACPD 35 dias
+
+```{r}
+# -----------------------------
+# 📦 Pacotes
+# -----------------------------
+library(DHARMa)
+library(readxl)
+library(tidyverse)
+library(pracma)
+library(lme4)
+library(emmeans)
+library(multcompView)
+library(multcomp)
+library(stringr)
+
+# -----------------------------
+# 📥 1. Carregar os dados
+# -----------------------------
+dados <- read_excel("Trabalho final Emerson.xlsx", sheet = "Planilha1")
+
+# -----------------------------
+# 🧹 2. Filtrar até o dia 35
+# -----------------------------
+dados_filtrados_35 <- dados %>%
+  filter(Dia <= 35)
+
+# -----------------------------
+# 📊 3. Calcular AACPD por unidade experimental
+# -----------------------------
+aacpd_result_35 <- dados_filtrados_35 %>%
+  arrange(Planta, Trifolio, Foliolo, Avaliador, Tratamento, Dia) %>%
+  group_by(Planta, Trifolio, Foliolo, Avaliador, Tratamento) %>%
+  summarise(
+    AACPD = trapz(Dia, Severidade),
+    .groups = "drop"
+  )
+
+# -----------------------------
+# ⚠️ 4. Ajustar valores zero (GLMM Gamma não aceita zeros)
+# -----------------------------
+aacpd_result_35 <- aacpd_result_35 %>%
+  mutate(AACPD_adj_35 = AACPD + 0.01)
+
+# -----------------------------
+# 🏗️ 5. Modelo misto com distribuição Gamma
+# -----------------------------
+modelo_glmm_35 <- glmer(
+  AACPD_adj_35 ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador),
+  data = aacpd_result_35,
+  family = Gamma(link = "log")
+)
+
+# -----------------------------
+# 🧪 6. Diagnóstico de resíduos
+# -----------------------------
+summary(modelo_glmm_35)
+res_sim_35 <- simulateResiduals(modelo_glmm_35)
+plot(res_sim_35)
+
+# -----------------------------
+# 📊 7. Médias ajustadas e letras de significância
+# -----------------------------
+medias_35 <- emmeans(modelo_glmm_35, ~ Tratamento, type = "response")
+letras_35 <- cld(medias_35, Letters = letters, adjust = "tukey")
+letras_35$.group <- gsub(" ", "", letras_35$.group)
+
+# Renomear tratamentos para gráfico
+letras_35$Tratamento <- letras_35$Tratamento %>%
+  str_replace("(?i)isola[dt]o\\s*", "Iso. ") %>%
+  str_replace("(?i)produto\\s*", "Prod. ") %>%
+  str_replace("(?i)controle", "Cont.")
+
+# -----------------------------
+# 📦 8. Organizar para gráfico
+# -----------------------------
+letras_df_35 <- letras_35[, c("Tratamento", "response", "SE", ".group")]
+
+# Reordenar fatores para o gráfico
+ordem_35 <- letras_df_35$Tratamento[order(letras_df_35$response)]
+letras_df_35$Tratamento <- factor(letras_df_35$Tratamento, levels = ordem_35)
+
+# -----------------------------
+# 🎨 9. Gráfico final
+# -----------------------------
+ggplot(letras_df_35, aes(x = Tratamento, y = response)) +
+  geom_col(fill = "#BC8F8F", width = 0.7) +
+  geom_errorbar(aes(ymin = response - SE, ymax = response + SE), width = 0.2) +
+  geom_text(aes(label = .group), vjust = -0.5, fontface = "bold", size = 5) +
+  labs(
+    title = "AACPD dos tratamentos (até 35 dias)",
+    x = "Tratamentos",
+    y = "AACPD"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```

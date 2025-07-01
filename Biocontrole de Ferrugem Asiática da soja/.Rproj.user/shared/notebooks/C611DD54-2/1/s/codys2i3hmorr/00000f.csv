@@ -1,0 +1,53 @@
+"0","library(emmeans)"
+"0","library(multcomp)"
+"2","G3;Carregando pacotes exigidos: mvtnorm
+g"
+"2","G3;Carregando pacotes exigidos: survival
+g"
+"2","G3;Carregando pacotes exigidos: TH.data
+g"
+"2","G3;
+Anexando pacote: ‘TH.data’
+
+g"
+"2","G3;O seguinte objeto é mascarado por ‘package:MASS’:
+
+    geyser
+
+g"
+"0","library(ggplot2)"
+"0","library(dplyr)"
+"0","library(stringr)"
+"0","# 1. Obter médias ajustadas do modelo"
+"0","medias <- emmeans(modelo_completo, ~ Tratamento)"
+"0",""
+"0","# 2. Comparações com Tukey + letras de significância"
+"0","letras <- cld(medias, Letters = letters, adjust = ""tukey"")"
+"2","G3;Note: adjust = ""tukey"" was changed to ""sidak""
+because ""tukey"" is only appropriate for one set of pairwise comparisons
+g"
+"0","# 3. Remover espaços das letras"
+"0","letras$.group <- gsub("" "", """", letras$.group)"
+"0",""
+"0","# 4. Renomear tratamentos corretamente"
+"0","letras$Tratamento <- letras$Tratamento %>%"
+"0","  str_replace(""(?i)isola[dt]o\\s*"", ""Iso. "") %>%"
+"0","  str_replace(""(?i)produto\\s*"", ""Prod. "") %>%"
+"0","  str_replace(""(?i)controle"", ""Cont."")"
+"0","# 5. Ordenar por AACPD (emmean) e fixar ordem como fator"
+"0","letras <- letras %>%"
+"0","  arrange(emmean) %>%"
+"0","  mutate(Tratamento = factor(Tratamento, levels = Tratamento))"
+"0",""
+"0","# 6. Plot com nomes e ordem corrigidos"
+"0","ggplot(letras, aes(x = Tratamento, y = emmean)) +"
+"0","  geom_col(fill = ""#4682B4"", width = 0.7) +"
+"0","  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +"
+"0","  geom_text(aes(label = .group), vjust = -0.5, size = 5) +"
+"0","  labs("
+"0","    title = ""AACPD ajustado por tratamento"","
+"0","    y = ""AACPD (área abaixo da curva)"","
+"0","    x = ""Tratamento"""
+"0","  ) +"
+"0","  theme_minimal(base_size = 14) +"
+"0","  theme(axis.text.x = element_text(angle = 45, hjust = 1))"

@@ -1,0 +1,1 @@
+"0","qqnorm(resid(modelo_log)); qqline(resid(modelo_log))"

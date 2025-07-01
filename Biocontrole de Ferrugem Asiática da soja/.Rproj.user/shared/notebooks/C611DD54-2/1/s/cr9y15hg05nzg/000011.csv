@@ -1,0 +1,1 @@
+"0","qqnorm(resid(modelo_sqrt)); qqline(resid(modelo_sqrt))  # QQ-plot"
