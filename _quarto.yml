@@ -12,7 +12,7 @@ website:
 
   navbar:
     pinned: true
-    background: "#323f45"
+    background: "#571d1a"
     left:
       - href: index.qmd
         text: Home
@@ -45,7 +45,7 @@ website:
   page-navigation: true
   page-footer: 
     left: "Copyright 2025, D.O. Ramos & P.T.S. Nogueira"
-    background: "#323f45"
+    background: "#571d1a"
 
 format:
   html:
