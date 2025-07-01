@@ -1,32 +1,32 @@
 {
   "index.qmd": {
-    "index.html": "711b0cb1"
-  },
-  "about.qmd": {
-    "about.html": "b3af019a"
-  },
-  "o_projeto.qmd": {
-    "o_projeto.html": "79e41fa1"
-  },
-  "exp_dad.qmd": {
-    "exp_dad.html": "67a49c2c"
-  },
-  "table.qmd": {
-    "table.html": "6f780baf"
-  },
-  "sobre.qmd": {
-    "sobre.html": "e8d3a2b4"
+    "index.html": "0b8122e7"
   },
   "aaacpd.qmd": {
-    "aaacpd.html": "96c74d32"
+    "aaacpd.html": "ce5489d8"
   },
-  "transformacao.qmd": {
-    "transformacao.html": "4ac5a6c3"
+  "about.qmd": {
+    "about.html": "d1ed550f"
+  },
+  "exp_dad.qmd": {
+    "exp_dad.html": "19670c78"
   },
   "modelo_misto.qmd": {
-    "modelo_misto.html": "2ba84177"
+    "modelo_misto.html": "577fe226"
+  },
+  "o_projeto.qmd": {
+    "o_projeto.html": "3c14a9f5"
   },
   "ranqueamento.qmd": {
-    "ranqueamento.html": "90afd249"
+    "ranqueamento.html": "a605e839"
+  },
+  "sobre.qmd": {
+    "sobre.html": "83660b5f"
+  },
+  "table.qmd": {
+    "table.html": "909be7e9"
+  },
+  "transformacao.qmd": {
+    "transformacao.html": "0f08112d"
   }
 }

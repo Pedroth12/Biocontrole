@@ -1,15 +1,3 @@
 ---
-title: "Biocontrole de Ferrugem Asiática da soja"
+title: ""
 ---
-
-# O projeto
-
-A ferrugem asiática da soja, causada pelo fungo biotrófico *Phakopsora pachyrhizi*, é uma das doenças mais severas que acometem a cultura da soja no Brasil e no mundo, resultando em perdas significativas de produtividade. O controle químico, baseado em fungicidas multissítios e sítio-específicos, tem sido a principal estratégia adotada, mas enfrenta limitações crescentes devido à evolução da resistência fúngica e ao elevado custo de aplicação.
-
-O controle biológico, por sua vez, ainda é pouco explorado e apresenta resultados inconsistentes em campo, refletindo lacunas no conhecimento sobre os agentes e suas interações ecológicas. Entre as alternativas promissoras, destaca-se a exploração de **fungos hiperparasitas** , microrganismos capazes de parasitar outros parasitas, como potenciais agentes de biocontrole. Embora estudos nessa área sejam escassos, os hiperparasitas representam uma via inovadora para o manejo sustentável da ferrugem asiática, especialmente frente ao esgotamento das estratégias convencionais.
-
-Neste estudo, foi avaliada a progressão da ferrugem asiática da soja em condições controladas, visando comparar diferentes estratégias de manejo. Foram testados sete isolados de fungos potencialmente hiperparasitas, além de um fungicida químico de referência e dois produtos biológicos à base de *Bacillus* spp. Um tratamento controle negativo, sem aplicação de agentes, também foi incluído para efeito comparativo. A severidade da doença foi quantificada utilizando-se uma escala diagramática padronizada, conforme proposto por Franceschi et al. (2020), que proporciona maior acurácia na estimativa dos sintomas e otimiza o uso de recursos experimentais. A proposta central foi investigar o potencial de isolados fúngicos como agentes de biocontrole da ferrugem, em comparação às estratégias convencionais de controle químico e biológico disponíveis no mercado.
-
-# ![](images/clipboard-54391932.png)
-
-##### Fig.1 Escala diagramática para avaliação da severidade da ferrugem asiática da soja (Franceschi et al. 2020)

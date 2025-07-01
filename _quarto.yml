@@ -1,8 +1,8 @@
 project:
   type: website
-
+  output-dir: docs
 website:
-  title: "Biocontrole de Ferrugem Asiática da Soja"
+  title: "Biocontrole"
   navbar:
     left:
       - href: index.qmd
@@ -25,7 +25,6 @@ website:
             file: ranqueamento.qmd
       - text: "Sobre os autores"
         file: sobre.qmd
-
 format:
   html:
     theme:

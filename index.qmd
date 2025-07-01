@@ -1,5 +1,5 @@
 ---
-title: "Biocontrole de Ferrugem Asiática da soja"
+title: "Biocontrole de Ferrugem Asiática da Soja"
 ---
 
 # O projeto
@@ -12,4 +12,4 @@ Neste estudo, foi avaliada a progressão da ferrugem asiática da soja em condi�
 
 # ![](images/clipboard-54391932.png)
 
-##### Fig.1 Escala diagramática para avaliação da severidade da ferrugem asiática da soja (Franceschi et al. 2020)
+Fig.1 Escala diagramática para avaliação da severidade da ferrugem asiática da soja (Franceschi et al. 2020)

@@ -1,18 +1,3 @@
 ---
-title: "Tabela"
+title: ""
 ---
-
-# Tabela de dados
-
-```{r}
-# Pacotes necessários
-library(readxl)
-library(knitr)   # para exibir como tabela
-library(dplyr)
-
-# Ler os dados da planilha
-dados <- read_excel("Trabalho final Emerson.xlsx", sheet = "Planilha1")
-
-# Mostrar os primeiros registros da tabela (ou use `dados` para tudo)
-kable(head(dados,), caption = "Amostra dos dados da planilha")
-```
