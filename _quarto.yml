@@ -2,8 +2,10 @@ project:
   type: website
   output-dir: docs
 website:
-  title: "Biocontrole"
+  title: "Biocontrole de Ferrugem Asiática da Soja"
+  favicon: images/PhapaK8108b.png
   navbar:
+    background: "#323f45"
     left:
       - href: index.qmd
         text: Home
@@ -25,13 +27,20 @@ website:
             file: ranqueamento.qmd
       - text: "Sobre os autores"
         file: sobre.qmd
+        
+    page-navigation: true
+    page-footer: 
+      left: "Copyright 2023, D.O. Ramos & P.T.S. Nogueira"
+      background: "#323f45"
 format:
   html:
     theme:
-      - cosmo
-      - brand
-    css: styles.css
+      light: sandstone
+      dark: darkly
     toc: true
+    code-copy: true
+    code-overflow: wrap
+    warning: false
 
 editor: visual
 
