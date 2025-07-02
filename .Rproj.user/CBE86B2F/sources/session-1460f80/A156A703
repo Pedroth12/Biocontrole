@@ -3,9 +3,9 @@
     "path": "C:/Users/danil/OneDrive/Biocontrole/modelo_misto.qmd",
     "project_path": "modelo_misto.qmd",
     "type": "quarto_markdown",
-    "hash": "0",
+    "hash": "89529335",
     "contents": "",
-    "dirty": false,
+    "dirty": true,
     "created": 1751461246106.0,
     "source_on_save": false,
     "relative_order": 1,
@@ -16,14 +16,16 @@
         "Source": "Source",
         "docOutlineVisible": "1",
         "rmdVisualCollapsedChunks": "",
-        "rmdVisualModeLocation": "35:137.60000610351562"
+        "rmdVisualModeLocation": "75:31.360000610351562",
+        "cursorPosition": "4,0",
+        "scrollLine": "0"
     },
     "folds": "",
     "lastKnownWriteTime": 1751379186,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1751379186,
+    "last_content_update": 1751461490845,
     "read_only": false,
     "read_only_alternatives": []
 }

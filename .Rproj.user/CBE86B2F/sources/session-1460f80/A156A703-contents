@@ -4,6 +4,8 @@ title: ""
 
 # Modelo misto
 
+Ativando os Pacotes necessários para a a
+
 ```{r}
 # Pacotes necessários
 library(tidyverse)
@@ -42,5 +44,11 @@ modelo_nulo <- lmer(
 comparacao_robusta <- PBmodcomp(modelo_completo, modelo_nulo, nsim = 1000)
 print(comparacao_robusta)
 
+
+```
+
+### Importando os dados
+
+```{r}
 
 ```
