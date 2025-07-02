@@ -3,6 +3,12 @@ title: ""
 format: html
 ---
 
-Danilo e Pedro.
+🎓 Este trabalho foi desenvolvido como parte da disciplina FIP 606 - Análise e Visualização de Dados em Fitopatologia, ministrada pelo Prof. [Emerson Del Ponte](https://emersondelponte.netlify.app/), na [Universidade Federal de Viçosa](https://www.ufv.br/).
+
+👨‍🔬 Somos [Danilo Oliveira Ramos](https://www.linkedin.com/in/danilo-ramos-718146360/) e [Pedro Thiago Santos Nogueira](https://www.linkedin.com/in/pedro-thiago-santos-nogueira-0931271bb/), dois micologistas apaixonados por fungos e especialistas em taxonomia de fungos filamentosos. Fazemos parte do MicoLab, onde desenvolvemos pesquisas que vão desde o isolamento, controle biológico até a descrição de novas espécies.
+
+🍄 Além disso, integramos o [LA Fungi](https://www.instagram.com/lafungi.ufv/) – a Liga Acadêmica de Estudos e Pesquisa em Fungos da UFV - onde promovemos ações de extensão, pesquisa e divulgação científica voltadas à micologia.
+
+📲 Como parte dessas iniciativas, também criamos um aplicativo em Shiny App para mapeamento e informação sobre a ocorrência de cogumelos no Brasil, conectando ciência, conservação e comunidade.
 
 ![](images/clipboard-2557491576.png)
