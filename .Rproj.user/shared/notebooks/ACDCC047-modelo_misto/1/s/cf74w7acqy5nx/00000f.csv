@@ -1,0 +1,7 @@
+"0","modelo_completo <- lmer("
+"0","  AACPD ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador),"
+"0","  data = aacpd_result,"
+"0","  REML = FALSE  # necessário para comparação de modelos"
+"0",")"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"

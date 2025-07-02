@@ -1,0 +1,1 @@
+"0","dados <- read_excel(""Trabalho final Emerson.xlsx"", sheet = ""Planilha1"")"

@@ -63,7 +63,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./images/icon.png" rel="icon" type="image/png">
+<link href="./images/icone.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -199,6 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#gráficos" id="toc-gráficos" class="nav-link active" data-scroll-target="#gráficos">Gráficos</a>
   <ul class="collapse">
+  <li><a href="#visualização-do-progresso-da-severidade-da-doença" id="toc-visualização-do-progresso-da-severidade-da-doença" class="nav-link" data-scroll-target="#visualização-do-progresso-da-severidade-da-doença">Visualização do progresso da severidade da doença</a></li>
   <li><a href="#gráfico-único" id="toc-gráfico-único" class="nav-link" data-scroll-target="#gráfico-único">Gráfico único</a></li>
   <li><a href="#criando-gráficos-individuais" id="toc-criando-gráficos-individuais" class="nav-link" data-scroll-target="#criando-gráficos-individuais">Criando gráficos individuais</a></li>
   </ul></li>
@@ -213,6 +214,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="gráficos" class="level1">
 <h1>Gráficos</h1>
+<section id="visualização-do-progresso-da-severidade-da-doença" class="level2">
+<h2 class="anchored" data-anchor-id="visualização-do-progresso-da-severidade-da-doença">Visualização do progresso da severidade da doença</h2>
+<p>Nesta seção, serão gerados gráficos para visualizar a evolução da severidade da ferrugem asiática ao longo do tempo, considerando os diferentes tratamentos. Serão apresentadas duas abordagens: um gráfico único com todas as curvas e gráficos individuais facetados por tratamento.</p>
+</section>
 <section id="gráfico-único" class="level2">
 <h2 class="anchored" data-anchor-id="gráfico-único">Gráfico único</h2>
 <p>Para dar início as análises, vamos <strong>carregar os pacotes necessários</strong> para essas análises:</p>
@@ -221,18 +226,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>Importando dos dados que serão analisados</strong></p>
+<p>Primeiramente, os dados experimentais são importados do arquivo Excel contendo as avaliações de severidade ao longo dos dias para cada unidade experimental.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dados <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"Trabalho final Emerson.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"Planilha1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Resumir os dados: <strong>calcular a média da severidade por tratamento e dia</strong></p>
+<p>Os dados são então resumidos para obter a média da severidade por dia para cada tratamento. Esse resumo facilita a visualização da tendência geral do progresso da doença em cada grupo avaliado.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>resumo <span class="ot">&lt;-</span> dados <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Tratamento, Dia) <span class="sc">%&gt;%</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Severidade_media =</span> <span class="fu">mean</span>(Severidade, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>Criar o gráfico</strong></p>
+<p><strong>Gráfico único com todos os tratamentos</strong></p>
+<p>O gráfico a seguir mostra a curva média de severidade da doença ao longo do tempo para todos os tratamentos simultaneamente. Isso permite uma comparação direta entre os tratamentos em termos de velocidade e intensidade da progressão da ferrugem.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(resumo, <span class="fu">aes</span>(<span class="at">x =</span> Dia, <span class="at">y =</span> Severidade_media, <span class="at">color =</span> Tratamento)) <span class="sc">+</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
@@ -260,7 +266,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="criando-gráficos-individuais" class="level2">
 <h2 class="anchored" data-anchor-id="criando-gráficos-individuais">Criando gráficos individuais</h2>
-<p>Criar o gráfico facetado</p>
+<p>Para facilitar a análise visual de cada tratamento separadamente, os dados também foram representados em gráficos individuais, usando a função <code>facet_wrap</code>. Essa abordagem destaca o comportamento isolado de cada tratamento ao longo do tempo.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(resumo, <span class="fu">aes</span>(<span class="at">x =</span> Dia, <span class="at">y =</span> Severidade_media)) <span class="sc">+</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>

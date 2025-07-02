@@ -197,11 +197,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#transformações" id="toc-transformações" class="nav-link active" data-scroll-target="#transformações">Transformações</a>
+  <li><a href="#transformações-dos-dados-para-normalidade-e-homocedasticidade" id="toc-transformações-dos-dados-para-normalidade-e-homocedasticidade" class="nav-link active" data-scroll-target="#transformações-dos-dados-para-normalidade-e-homocedasticidade">Transformações dos dados para normalidade e homocedasticidade</a>
   <ul class="collapse">
-  <li><a href="#transformação-log" id="toc-transformação-log" class="nav-link" data-scroll-target="#transformação-log">Transformação log</a></li>
+  <li><a href="#transformação-logarítmica" id="toc-transformação-logarítmica" class="nav-link" data-scroll-target="#transformação-logarítmica">Transformação Logarítmica</a></li>
   <li><a href="#transformação-box-cox" id="toc-transformação-box-cox" class="nav-link" data-scroll-target="#transformação-box-cox">Transformação Box-Cox</a></li>
-  <li><a href="#transformação-sqrt" id="toc-transformação-sqrt" class="nav-link" data-scroll-target="#transformação-sqrt">Transformação SQRT</a></li>
+  <li><a href="#transformação-raiz-quadrada-sqrt" id="toc-transformação-raiz-quadrada-sqrt" class="nav-link" data-scroll-target="#transformação-raiz-quadrada-sqrt">Transformação Raiz Quadrada (SQRT)</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -212,10 +212,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="transformações" class="level1">
-<h1>Transformações</h1>
-<section id="transformação-log" class="level2">
-<h2 class="anchored" data-anchor-id="transformação-log">Transformação log</h2>
+<section id="transformações-dos-dados-para-normalidade-e-homocedasticidade" class="level1">
+<h1>Transformações dos dados para normalidade e homocedasticidade</h1>
+<p>Nesta seção, são aplicadas transformações na variável resposta AACPD com o objetivo de atender às suposições do modelo linear misto, especialmente quanto à normalidade dos resíduos e homogeneidade das variâncias. São testadas três abordagens: logarítmica, Box-Cox e raiz quadrada (sqrt).</p>
+<section id="transformação-logarítmica" class="level2">
+<h2 class="anchored" data-anchor-id="transformação-logarítmica">Transformação Logarítmica</h2>
+<p>A transformação logarítmica (log1p) é utilizada para reduzir a assimetria dos dados. A função <code>log1p()</code> aplica log(1 + x), o que permite lidar com valores próximos de zero sem gerar indefinições.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pracma)</span>
@@ -356,6 +358,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section>
 <section id="transformação-box-cox" class="level2">
 <h2 class="anchored" data-anchor-id="transformação-box-cox">Transformação Box-Cox</h2>
+<p>A transformação de Box-Cox permite identificar o valor ótimo de lambda para normalizar os dados. Essa abordagem é útil quando não se sabe qual transformação é mais adequada a priori.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pacotes necessários</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -512,8 +515,9 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </section>
-<section id="transformação-sqrt" class="level2">
-<h2 class="anchored" data-anchor-id="transformação-sqrt">Transformação SQRT</h2>
+<section id="transformação-raiz-quadrada-sqrt" class="level2">
+<h2 class="anchored" data-anchor-id="transformação-raiz-quadrada-sqrt">Transformação Raiz Quadrada (SQRT)</h2>
+<p>A transformação raiz quadrada é útil para dados de contagem ou proporções moderadas, reduzindo a assimetria e estabilizando a variância.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Carregar pacotes necessários</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>

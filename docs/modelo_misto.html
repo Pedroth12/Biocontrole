@@ -197,7 +197,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#modelo-misto" id="toc-modelo-misto" class="nav-link active" data-scroll-target="#modelo-misto">Modelo misto</a></li>
+  <li><a href="#modelo-misto" id="toc-modelo-misto" class="nav-link active" data-scroll-target="#modelo-misto">Modelo misto</a>
+  <ul class="collapse">
+  <li><a href="#ativando-os-pacotes-necessários-para-a-análise" id="toc-ativando-os-pacotes-necessários-para-a-análise" class="nav-link" data-scroll-target="#ativando-os-pacotes-necessários-para-a-análise">Ativando os Pacotes necessários para a análise</a></li>
+  <li><a href="#importando-os-dados" id="toc-importando-os-dados" class="nav-link" data-scroll-target="#importando-os-dados">Importando os dados</a></li>
+  <li><a href="#calculando-aacpd-sem-transformação" id="toc-calculando-aacpd-sem-transformação" class="nav-link" data-scroll-target="#calculando-aacpd-sem-transformação">Calculando AACPD (sem transformação)</a></li>
+  <li><a href="#ajustando-o-modelo-completo-com-tratamento" id="toc-ajustando-o-modelo-completo-com-tratamento" class="nav-link" data-scroll-target="#ajustando-o-modelo-completo-com-tratamento">Ajustando o modelo completo (com tratamento)</a></li>
+  <li><a href="#ajustando-o-modelo-nulo-sem-tratamento" id="toc-ajustando-o-modelo-nulo-sem-tratamento" class="nav-link" data-scroll-target="#ajustando-o-modelo-nulo-sem-tratamento">Ajustando o modelo nulo (sem tratamento)</a></li>
+  <li><a href="#comparação-robusta-por-bootstrap" id="toc-comparação-robusta-por-bootstrap" class="nav-link" data-scroll-target="#comparação-robusta-por-bootstrap">Comparação robusta por bootstrap</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -209,45 +217,74 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="modelo-misto" class="level1">
 <h1>Modelo misto</h1>
+<p>Um modelo misto serve pra analisar dados com <strong>estrutura hierárquica</strong>, <strong>medidas repetidas</strong> ou <strong>variação agrupada</strong>. Esse modelo combina <strong>efeitos fixos</strong> (tratamento aplicado, que queremos <strong>testar e comparar</strong>) e <strong>efeitos aleatórios</strong> (fontes de variação aleatória, como plantas, folhas, avaliadores, etc.).</p>
+<p>Nossos dados contém <strong>vários níveis hierárquicos</strong>: Planta → Trifólio → Folíolo</p>
+<p>Optamos pelo uso de um modelo misto devido à estrutura hierárquica dos dados experimentais, nos quais as observações de severidade foram feitas em folíolos pertencentes a trifólios, dentro de plantas, avaliadas por diferentes observadores. Essa organização gera dependência entre as medições, violando a suposição de independência dos erros em modelos lineares tradicionais. O modelo misto permite considerar essa variação estrutural por meio de efeitos aleatórios, isolando o efeito específico dos tratamentos (efeito fixo) e proporcionando uma análise mais precisa e robusta do impacto das diferentes estratégias de manejo sobre a progressão da ferrugem asiática.</p>
+<section id="ativando-os-pacotes-necessários-para-a-análise" class="level3">
+<h3 class="anchored" data-anchor-id="ativando-os-pacotes-necessários-para-a-análise">Ativando os Pacotes necessários para a análise</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pacotes necessários</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pracma)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pbkrtest)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar os dados</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>dados <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"Trabalho final Emerson.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"Planilha1"</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Calcular AACPD (sem transformação)</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>aacpd_result <span class="ot">&lt;-</span> dados <span class="sc">%&gt;%</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Tratamento, Planta, Trifolio, Foliolo, Avaliador) <span class="sc">%&gt;%</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">AACPD =</span> <span class="fu">trapz</span>(Dia, Severidade),</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Ajustar o modelo completo (com tratamento)</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>modelo_completo <span class="ot">&lt;-</span> <span class="fu">lmer</span>(</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  AACPD <span class="sc">~</span> Tratamento <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Planta<span class="sc">/</span>Trifolio<span class="sc">/</span>Foliolo<span class="sc">/</span>Avaliador),</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aacpd_result,</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">REML =</span> <span class="cn">FALSE</span>  <span class="co"># necessário para comparação de modelos</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Ajustar o modelo nulo (sem tratamento)</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>modelo_nulo <span class="ot">&lt;-</span> <span class="fu">lmer</span>(</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  AACPD <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Planta<span class="sc">/</span>Trifolio<span class="sc">/</span>Foliolo<span class="sc">/</span>Avaliador),</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aacpd_result,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">REML =</span> <span class="cn">FALSE</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Comparação robusta por bootstrap</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>comparacao_robusta <span class="ot">&lt;-</span> <span class="fu">PBmodcomp</span>(modelo_completo, modelo_nulo, <span class="at">nsim =</span> <span class="dv">1000</span>)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(comparacao_robusta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pracma)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pbkrtest)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="importando-os-dados" class="level3">
+<h3 class="anchored" data-anchor-id="importando-os-dados">Importando os dados</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dados <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"Trabalho final Emerson.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"Planilha1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="calculando-aacpd-sem-transformação" class="level3">
+<h3 class="anchored" data-anchor-id="calculando-aacpd-sem-transformação">Calculando AACPD (sem transformação)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>aacpd_result <span class="ot">&lt;-</span> dados <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Tratamento, Planta, Trifolio, Foliolo, Avaliador) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">AACPD =</span> <span class="fu">trapz</span>(Dia, Severidade),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Aqui ele calcula o <strong>AACPD</strong> (Área Abaixo da Curva de Progresso da Doença), que é uma medida comum para doenças em plantas.</p>
+<p>🔧 Usa a função <code>trapz()</code> para calcular a <strong>área sob a curva</strong> da severidade ao longo dos dias.</p>
+</section>
+<section id="ajustando-o-modelo-completo-com-tratamento" class="level3">
+<h3 class="anchored" data-anchor-id="ajustando-o-modelo-completo-com-tratamento">Ajustando o modelo completo (com tratamento)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>modelo_completo <span class="ot">&lt;-</span> <span class="fu">lmer</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  AACPD <span class="sc">~</span> Tratamento <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Planta<span class="sc">/</span>Trifolio<span class="sc">/</span>Foliolo<span class="sc">/</span>Avaliador),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aacpd_result,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">REML =</span> <span class="cn">FALSE</span>  <span class="co"># necessário para comparação de modelos</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong><code>AACPD ~ Tratamento</code></strong>: está testando o efeito fixo do <strong>Tratamento</strong> sobre o AACPD.</p>
+<ul>
+<li><p><strong><code>(1 | Planta/Trifolio/Foliolo/Avaliador)</code></strong>: estrutura hierárquica de efeitos aleatórios:</p>
+<p>Avaliações foram feitas em <em>folíolos</em> dentro de <em>trifólios</em>, dentro de <em>plantas</em>, e cada uma foi avaliada por um <strong>Avaliador</strong>.</p>
+<p>Isso ajuda a <strong>controlar a variação natural</strong> desses níveis e evitar que confundam o efeito do tratamento.</p>
+<p><code>REML = FALSE</code>: usa máxima verossimilhança (ML) e <strong>não REML</strong>, pois vai comparar modelos (é o certo nesse caso).</p></li>
+</ul>
+</section>
+<section id="ajustando-o-modelo-nulo-sem-tratamento" class="level3">
+<h3 class="anchored" data-anchor-id="ajustando-o-modelo-nulo-sem-tratamento">Ajustando o modelo nulo (sem tratamento)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>modelo_nulo <span class="ot">&lt;-</span> <span class="fu">lmer</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  AACPD <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Planta<span class="sc">/</span>Trifolio<span class="sc">/</span>Foliolo<span class="sc">/</span>Avaliador),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> aacpd_result,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">REML =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>É igual ao modelo anterior, <strong>mas sem o efeito fixo de Tratamento</strong>. Serve como <strong>base de comparação</strong>.</p>
+</section>
+<section id="comparação-robusta-por-bootstrap" class="level3">
+<h3 class="anchored" data-anchor-id="comparação-robusta-por-bootstrap">Comparação robusta por bootstrap</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>comparacao_robusta <span class="ot">&lt;-</span> <span class="fu">PBmodcomp</span>(modelo_completo, modelo_nulo, <span class="at">nsim =</span> <span class="dv">1000</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(comparacao_robusta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Bootstrap test; time: 82.26 sec; samples: 1000; extremes: 0;
+<pre><code>Bootstrap test; time: 74.55 sec; samples: 1000; extremes: 0;
 large : AACPD ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador)
          stat df   p.value    
 LRT    150.84 10 &lt; 2.2e-16 ***
@@ -256,8 +293,14 @@ PBtest 150.84     0.000999 ***
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
+<ul>
+<li><p>Ele comparou os dois modelos com <strong>bootstrap paramétrico</strong> (via <code>PBmodcomp</code>).</p>
+<p>Isso gerou um <strong>p-valor mais robusto</strong>, mesmo se os dados não fossem perfeitamente normais.</p></li>
+</ul>
+<p>Para analisar o efeito dos tratamentos sobre a progressão da ferrugem asiática da soja, utilizamos um modelo de efeitos mistos, que permite considerar a estrutura hierárquica dos dados (planta, trifólio, folíolo e avaliador) como fontes de variação aleatória. A variável resposta foi a área abaixo da curva de progresso da doença (AACPD), calculada para cada folíolo. O efeito fixo de interesse foi o tratamento, enquanto os demais fatores foram tratados como efeitos aleatórios. A comparação entre o modelo completo (com tratamento) e o modelo nulo (sem tratamento), realizada via bootstrap, indicou se o tratamento teve efeito significativo sobre a severidade acumulada da doença, controlando a variabilidade natural do experimento.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

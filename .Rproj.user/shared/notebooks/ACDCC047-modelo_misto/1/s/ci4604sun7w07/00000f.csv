@@ -1,0 +1,63 @@
+"0","comparacao_robusta <- PBmodcomp(modelo_completo, modelo_nulo, nsim = 1000)"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00251829 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00216278 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00312199 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00295643 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00309756 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00249183 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0024062 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00223554 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00348696 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00354205 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00334568 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00292731 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00211816 (tol = 0.002, component 1)g
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradientg
+"
+"2","G2;H2;Warningh in checkConv(attr(opt, ""derivs""), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvaluesg
+"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"0","print(comparacao_robusta)"
+"1","Bootstrap test; time: 46.66 sec; samples: 1000; extremes: 0;
+large : AACPD ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador)
+         stat df   p.value    
+LRT    150.84 10 < 2.2e-16 ***
+PBtest 150.84     0.000999 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+"

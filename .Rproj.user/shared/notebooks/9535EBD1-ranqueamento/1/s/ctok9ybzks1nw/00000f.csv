@@ -1,0 +1,111 @@
+"0","# -----------------------------"
+"0","# 📦 Pacotes"
+"0","# -----------------------------"
+"0","library(DHARMa)"
+"0","library(readxl)"
+"0","library(tidyverse)"
+"0","library(pracma)"
+"0","library(lme4)"
+"0","library(emmeans)"
+"0","library(multcompView)"
+"0","library(multcomp)"
+"0","library(stringr)"
+"0",""
+"0","# -----------------------------"
+"0","# 📥 1. Carregar os dados"
+"0","# -----------------------------"
+"0","dados <- read_excel(""Trabalho final Emerson.xlsx"", sheet = ""Planilha1"")"
+"0",""
+"0","# -----------------------------"
+"0","# 🧹 2. Filtrar até o dia 28"
+"0","# -----------------------------"
+"0","dados_filtrados_28 <- dados %>%"
+"0","  filter(Dia <= 28)"
+"0",""
+"0","# -----------------------------"
+"0","# 📊 3. Calcular AACPD por unidade experimental"
+"0","# -----------------------------"
+"0","aacpd_result_28 <- dados_filtrados_28 %>%"
+"0","  arrange(Planta, Trifolio, Foliolo, Avaliador, Tratamento, Dia) %>%"
+"0","  group_by(Planta, Trifolio, Foliolo, Avaliador, Tratamento) %>%"
+"0","  summarise("
+"0","    AACPD = trapz(Dia, Severidade),"
+"0","    .groups = ""drop"""
+"0","  )"
+"0",""
+"0","# -----------------------------"
+"0","# ⚠️ 4. Ajustar valores zero (GLMM Gamma não aceita zeros)"
+"0","# -----------------------------"
+"0","aacpd_result_28 <- aacpd_result_28 %>%"
+"0","  mutate(AACPD_adj_28 = AACPD + 0.01)"
+"0",""
+"0","# -----------------------------"
+"0","# 🏗️ 5. Modelo misto com distribuição Gamma"
+"0","# -----------------------------"
+"0","modelo_glmm_28 <- glmer("
+"0","  AACPD_adj_28 ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador),"
+"0","  data = aacpd_result_28,"
+"0","  family = Gamma(link = ""log"")"
+"0",")"
+"2","G3;boundary (singular) fit: see help('isSingular')
+g"
+"0","# -----------------------------"
+"0","# 🧪 6. Diagnóstico de resíduos"
+"0","# -----------------------------"
+"0","summary(modelo_glmm_28)"
+"1","Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: Gamma  ( log )
+Formula: AACPD_adj_28 ~ Tratamento + (1 | Planta/Trifolio/Foliolo/Avaliador)
+   Data: aacpd_result_28
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+   5875.8    5947.6   -2921.9    5843.8       644 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.0400 -0.6989 -0.2830  0.3818  6.1772 
+
+Random effects:
+ Groups                            Name        Variance  Std.Dev. 
+ Avaliador:Foliolo:Trifolio:Planta (Intercept) 1.587e-10 1.260e-05
+ Foliolo:Trifolio:Planta           (Intercept) 7.515e-10 2.741e-05
+ Trifolio:Planta                   (Intercept) 1.659e-01 4.073e-01
+ Planta                            (Intercept) 0.000e+00 0.000e+00
+ Residual                                      9.235e-01 9.610e-01
+Number of obs: 660, groups:  
+Avaliador:Foliolo:Trifolio:Planta, 60; Foliolo:Trifolio:Planta, 30; Trifolio:Planta, 10; Planta, 5
+
+Fixed effects:
+                    Estimate Std. Error t value Pr(>|z|)    
+(Intercept)          3.54429    0.18076  19.607  < 2e-16 ***
+TratamentoIsolado 1 -0.99482    0.17116  -5.812 6.16e-09 ***
+TratamentoIsolado 2 -0.06320    0.17974  -0.352 0.725139    
+TratamentoIsolado 3  0.09244    0.17461   0.529 0.596518    
+TratamentoIsolado 4 -0.04231    0.17683  -0.239 0.810896    
+TratamentoIsolado 5  0.32835    0.17554   1.871 0.061413 .  
+TratamentoIsolado 6  1.03009    0.17319   5.948 2.72e-09 ***
+TratamentoIsolado 7 -0.53633    0.17184  -3.121 0.001801 ** 
+TratamentoProduto 1 -0.54004    0.17409  -3.102 0.001922 ** 
+TratamentoProduto 2 -0.26609    0.17107  -1.555 0.119831    
+TratamentoProduto 3 -0.60673    0.17284  -3.510 0.000447 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) TrtmI1 TrtmI2 TrtmI3 TrtmI4 TrtmI5 TrtmI6 TrtmI7 TrtmP1 TrtmP2
+TrtmntIsld1 -0.467                                                               
+TrtmntIsld2 -0.473  0.468                                                        
+TrtmntIsld3 -0.471  0.484  0.500                                                 
+TrtmntIsld4 -0.454  0.487  0.474  0.468                                          
+TrtmntIsld5 -0.473  0.481  0.512  0.503  0.455                                   
+TrtmntIsld6 -0.469  0.476  0.486  0.477  0.462  0.480                            
+TrtmntIsld7 -0.472  0.493  0.483  0.496  0.460  0.506  0.483                     
+TrtmntPrdt1 -0.460  0.482  0.458  0.464  0.430  0.465  0.495  0.488              
+TrtmntPrdt2 -0.475  0.492  0.493  0.495  0.485  0.490  0.502  0.491  0.484       
+TrtmntPrdt3 -0.475  0.484  0.501  0.495  0.456  0.505  0.494  0.504  0.496  0.493
+optimizer (Nelder_Mead) convergence code: 0 (OK)
+boundary (singular) fit: see help('isSingular')
+
+"
+"0","res_sim_28 <- simulateResiduals(modelo_glmm_28)"
+"0","plot(res_sim_28)"
