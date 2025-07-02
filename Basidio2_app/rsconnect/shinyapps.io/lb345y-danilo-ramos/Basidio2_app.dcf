@@ -1,0 +1,12 @@
+name: Basidio2_app
+title: Basidio2_app
+username: lb345y-danilo-ramos
+account: lb345y-danilo-ramos
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15023438
+bundleId: 10554561
+url: https://lb345y-danilo-ramos.shinyapps.io/Basidio2_app/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
