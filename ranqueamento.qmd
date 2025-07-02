@@ -97,7 +97,7 @@ ggplot(letras, aes(x = Tratamento, y = emmean)) +
 
 ```
 
-# Modelo Generalziado - TESTE DE AJUSTE VIA K-S
+# Modelo Generalizado - TESTE DE AJUSTE VIA K-S
 
 ```{r}
 library(MASS)   # Para fitdistr
@@ -124,7 +124,7 @@ ks.test(x_beta, "pbeta", shape1 = beta_fit$estimate["shape1"], shape2 = beta_fit
 
 ```
 
-# Modelo Generalziado
+# Modelo Generalizado
 
 ```{r}
 # Pacotes
